@@ -6,3 +6,11 @@ src/prueba_cagada
 src/prueba_cagada.dSYM/Contents/Resources/DWARF/prueba_cagada
 
 src/shit
+
+*.class
+
+src/shit1
+
+src/shit2
+
+src/Test_UVa10731.java

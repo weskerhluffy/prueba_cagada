@@ -220,7 +220,7 @@ char *caca_comun_matrix_a_cadena(tipo_dato *matrix, natural filas_tam,
 		natural columas_tam, char *buffer) {
 	int i, j;
 	natural inicio_buffer_act = 0;
-	for (int i = 0; i < filas_tam; i++) {
+	for (i = 0; i < filas_tam; i++) {
 		caca_comun_arreglo_a_cadena(matrix + i * columas_tam, columas_tam,
 				buffer + inicio_buffer_act);
 		inicio_buffer_act += strlen(buffer + inicio_buffer_act);
@@ -389,7 +389,7 @@ static char caca_comun_letra_a_valor_mayuscula(char letra) {
 static natural caca_comun_max_natural(natural *nums, natural nums_tam) {
 	natural max = 0;
 
-int i;
+	int i;
 	for (i = 0; i < nums_tam; i++) {
 		natural num_act = nums[i];
 		if (num_act > max) {
@@ -531,8 +531,7 @@ static bool list_empty(struct my_list *s) {
 	return !s->head;
 }
 
-static void list_iterador_init(listilla_fifo *ctx,
-		listilla_iterador *iter) {
+static void list_iterador_init(listilla_fifo *ctx, listilla_iterador *iter) {
 	assert_timeout(!iter->ctx);
 	assert_timeout(!iter->primera_llamada);
 	assert_timeout(!iter->nodo_act);
@@ -730,6 +729,11 @@ static void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
 
 			if (nodo_act->indice == nodo_act->enlace_bajo) {
 				prueba_cagada_nodo *nodo_componente = NULL;
+				listilla_fifo *lista = list_new();
+				listilla_iterador *iter = &(listilla_iterador ) { 0 };
+				char letra_min = nodo_act->letra;
+				list_add_element(lista,
+						(void *) (entero_largo_sin_signo) letra_min);
 				do {
 					nodo_componente = stackaca_pop(pila_de_tarja);
 					caca_log_debug("en gpo %c esta %c", nodo_act->letra,
@@ -738,10 +742,25 @@ static void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
 					assert_timeout(
 							nodo_componente->indice!=PRUEBA_CAGADA_INDICE_INVALIDO);
 					nodo_componente->en_culada = falso;
-					(*matrix_componentes_p)[caca_comun_letra_a_valor_mayuscula(
-							nodo_act->letra)][caca_comun_letra_a_valor_mayuscula(
-							nodo_componente->letra)] = 1;
+					if (nodo_componente->letra < letra_min) {
+						letra_min = nodo_componente->letra;
+					}
+					list_add_element(lista,
+							(void *) (entero_largo_sin_signo) nodo_componente->letra);
 				} while (nodo_componente != nodo_act);
+
+				list_iterador_init(lista, iter);
+
+				while (list_iterador_hay_siguiente(iter)) {
+					char letra_act = (char) list_iterador_obten_siguiente(iter);
+					(*matrix_componentes_p)[caca_comun_letra_a_valor_mayuscula(
+							letra_min)][caca_comun_letra_a_valor_mayuscula(
+							letra_act)] = 1;
+				}
+
+				list_iterador_fini(iter);
+
+				list_free(lista);
 				caca_log_debug("la matrix aora es\n%s",
 						caca_comun_matrix_a_cadena_char((char*)*matrix_componentes_p, PRUEBA_CAGADA_MAX_LETRAS, PRUEBA_CAGADA_MAX_LETRAS, CACA_COMUN_BUF_STATICO));
 			}
@@ -755,12 +774,12 @@ static void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
 	stackaca_fini(pila_de_tarja);
 }
 
-static void prueba_cagada_tarja(prueba_cagada_nodo *nodos,
-		natural nodos_tam,
+// XXX: https://www.programming-algorithms.net/article/44220/Tarjan%27s-algorithm
+static void prueba_cagada_tarja(prueba_cagada_nodo *nodos, natural nodos_tam,
 		char (*matrix_componentes_p)[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS]) {
 
 	natural indice = 0;
-natural i;
+	natural i;
 	for (i = 0; i < nodos_tam; i++) {
 		prueba_cagada_nodo *nodo_act = nodos + i;
 		if (nodo_act->indice == PRUEBA_CAGADA_INDICE_INVALIDO
@@ -770,15 +789,14 @@ natural i;
 	}
 }
 
-static void prueba_cagada_core(prueba_cagada_nodo *nodos,
-		natural nodos_tam,
+static void prueba_cagada_core(prueba_cagada_nodo *nodos, natural nodos_tam,
 		char (*matrix_componentes_p)[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS]) {
 	prueba_cagada_tarja(nodos, nodos_tam, matrix_componentes_p);
 
 	caca_log_debug("pero q mierdas\n%s",
 			caca_comun_matrix_a_cadena_char((char *)*matrix_componentes_p, PRUEBA_CAGADA_MAX_LETRAS, PRUEBA_CAGADA_MAX_LETRAS, CACA_COMUN_BUF_STATICO));
 
-char chx,chy,cx,cy;
+	char chx, chy, cx, cy;
 	for (chx = PRUEBA_CAGADA_PRIMERA_LETRA, cx =
 			caca_comun_letra_a_valor_mayuscula(chx);
 			chx <= PRUEBA_CAGADA_ULTIMA_LETRA; chx++, cx =
@@ -806,13 +824,14 @@ char chx,chy,cx,cy;
 
 static void prueba_cagada_main() {
 	natural conjuntos_tam = 0;
+	bool primero = verdadero;
 	while (scanf("%u\n", &conjuntos_tam) > 0 && conjuntos_tam > 0) {
 		prueba_cagada_nodo *nodos = NULL;
 
 		nodos = calloc(PRUEBA_CAGADA_MAX_LETRAS, sizeof(prueba_cagada_nodo));
 		assert_timeout(nodos);
 
-natural i;
+		natural i;
 		for (i = 0; i < conjuntos_tam; i++) {
 			char opciones[5] = { PRUEBA_CAGADA_FIN_DE_CACADENA };
 			char respuesta = PRUEBA_CAGADA_FIN_DE_CACADENA;
@@ -832,7 +851,7 @@ natural i;
 				PRUEBA_CAGADA_INDICE_INVALIDO;
 				nodo_sup->vecinos = list_new();
 			}
-natural j;
+			natural j;
 			for (j = 0; j < 5; j++) {
 				char letra_act = opciones[j];
 				if (letra_act == respuesta) {
@@ -854,13 +873,16 @@ natural j;
 			}
 		}
 
+		if (!primero) {
+			printf("\n");
+		}
 		memset(matrix_componentes, 0, sizeof(matrix_componentes));
 		prueba_cagada_core(nodos, PRUEBA_CAGADA_MAX_LETRAS,
 				&matrix_componentes);
 
 		free(nodos);
 
-		printf("\n");
+		primero = falso;
 	}
 }
 
