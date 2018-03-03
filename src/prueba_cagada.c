@@ -5,15 +5,14 @@
  *      Author: ernesto
  */
 
-// XXX: https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1672
 #if 1
 #define _GNU_SOURCE
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <assert.h>
-#include <stddef.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <math.h>
@@ -258,7 +257,7 @@ char *caca_comun_matrix_a_cadena_char(char *matrix, natural filas_tam,
 		natural columas_tam, char *buffer) {
 	int i, j;
 	natural inicio_buffer_act = 0;
-	for (int i = 0; i < filas_tam; i++) {
+	for (i = 0; i < filas_tam; i++) {
 		caca_comun_arreglo_a_cadena_char(matrix + i * columas_tam, columas_tam,
 				buffer + inicio_buffer_act);
 		inicio_buffer_act += strlen(buffer + inicio_buffer_act);
@@ -368,7 +367,7 @@ static int caca_comun_lee_matrix_long_stdin(tipo_dato *matrix, int *num_filas,
 	return 0;
 }
 
-static inline natural caca_comun_cuenta_bitchs(tipo_dato num) {
+static natural caca_comun_cuenta_bitchs(tipo_dato num) {
 	natural bitch_cnt = 0;
 	tipo_dato num_mod = 0;
 	num_mod = num;
@@ -379,18 +378,19 @@ static inline natural caca_comun_cuenta_bitchs(tipo_dato num) {
 	return bitch_cnt;
 }
 
-static inline char caca_comun_letra_a_valor_minuscula(char letra) {
+static char caca_comun_letra_a_valor_minuscula(char letra) {
 	return letra - 'a';
 }
 
-static inline char caca_comun_letra_a_valor_mayuscula(char letra) {
+static char caca_comun_letra_a_valor_mayuscula(char letra) {
 	return letra - 'A';
 }
 
-static inline natural caca_comun_max_natural(natural *nums, natural nums_tam) {
+static natural caca_comun_max_natural(natural *nums, natural nums_tam) {
 	natural max = 0;
 
-	for (int i = 0; i < nums_tam; i++) {
+int i;
+	for (i = 0; i < nums_tam; i++) {
 		natural num_act = nums[i];
 		if (num_act > max) {
 			max = num_act;
@@ -405,7 +405,6 @@ static inline natural caca_comun_max_natural(natural *nums, natural nums_tam) {
 
 #if 1
 
-// XXX: https://lispmachine.wordpress.com/2009/05/13/queue-in-c/
 typedef struct my_struct {
 	void *valor;
 	struct my_struct* next;
@@ -460,7 +459,7 @@ struct my_list* list_add_element(struct my_list* s, void *valor) {
 }
 
 /* This is a queue and it is FIFO, so we will always remove the first element */
-static inline void *list_remove_element(struct my_list* s) {
+static void *list_remove_element(struct my_list* s) {
 	struct my_struct* h = NULL;
 	struct my_struct* p = NULL;
 	void *valor = NULL;
@@ -528,11 +527,11 @@ void list_print(const struct my_list* ps) {
 	printf("------------------\n");
 }
 
-static inline bool list_empty(struct my_list *s) {
+static bool list_empty(struct my_list *s) {
 	return !s->head;
 }
 
-static inline void list_iterador_init(listilla_fifo *ctx,
+static void list_iterador_init(listilla_fifo *ctx,
 		listilla_iterador *iter) {
 	assert_timeout(!iter->ctx);
 	assert_timeout(!iter->primera_llamada);
@@ -543,18 +542,18 @@ static inline void list_iterador_init(listilla_fifo *ctx,
 	iter->primera_llamada = verdadero;
 	iter->llamadas = 0;
 }
-static inline void list_iterador_fini(listilla_iterador *iter) {
+static void list_iterador_fini(listilla_iterador *iter) {
 	iter->ctx = NULL;
 	iter->nodo_act = NULL;
 	iter->primera_llamada = falso;
 	iter->llamadas = 0;
 }
 
-static inline void *list_iterador_peekea_actual(listilla_iterador *iter) {
+static void *list_iterador_peekea_actual(listilla_iterador *iter) {
 	return iter->nodo_act ? iter->nodo_act->valor : NULL;
 }
 
-static inline void *list_iterador_obten_siguiente(listilla_iterador *iter) {
+static void *list_iterador_obten_siguiente(listilla_iterador *iter) {
 	if (iter->nodo_act) {
 		iter->nodo_act = iter->nodo_act->next;
 	} else {
@@ -568,7 +567,7 @@ static inline void *list_iterador_obten_siguiente(listilla_iterador *iter) {
 	}
 	return iter->nodo_act ? iter->nodo_act->valor : NULL;
 }
-static inline void *list_iterador_hay_siguiente(listilla_iterador *iter) {
+static void *list_iterador_hay_siguiente(listilla_iterador *iter) {
 	listilla_nodo *siguiente = NULL;
 	if (!iter->nodo_act) {
 		if (iter->primera_llamada) {
@@ -581,14 +580,13 @@ static inline void *list_iterador_hay_siguiente(listilla_iterador *iter) {
 	return siguiente ? siguiente->valor : NULL;
 }
 
-static inline bool list_iterador_esta_initializado(listilla_iterador *iter) {
+static bool list_iterador_esta_initializado(listilla_iterador *iter) {
 	return !!iter->ctx;
 }
 
 #endif
 
 #if 1
-// XXX: http://www.zentut.com/c-tutorial/c-stack-using-pointers/
 typedef struct stackaca_nodo {
 	void *data;
 	struct stackaca_nodo* next;
@@ -600,14 +598,14 @@ typedef struct stackaca {
 /*
  init the stack
  */
-static inline void stackaca_init(stackaca *ctx) {
+static void stackaca_init(stackaca *ctx) {
 	ctx->cabeza = NULL;
 }
 
 /*
  push an element into stack
  */
-static inline void stackaca_push(stackaca *ctx, void *data) {
+static void stackaca_push(stackaca *ctx, void *data) {
 	stackaca_nodo* tmp = (stackaca_nodo*) malloc(sizeof(stackaca_nodo));
 	assert_timeout(tmp);
 	tmp->data = data;
@@ -617,7 +615,7 @@ static inline void stackaca_push(stackaca *ctx, void *data) {
 /*
  pop an element from the stack
  */
-static inline void *stackaca_pop(stackaca *ctx) {
+static void *stackaca_pop(stackaca *ctx) {
 	stackaca_nodo* tmp = ctx->cabeza;
 	void *caca = tmp->data;
 	ctx->cabeza = tmp->next;
@@ -627,17 +625,17 @@ static inline void *stackaca_pop(stackaca *ctx) {
 /*
  returns 1 if the stack is empty, otherwise returns 0
  */
-static inline bool stackaca_empty(stackaca *ctx) {
+static bool stackaca_empty(stackaca *ctx) {
 	return ctx->cabeza == NULL ? verdadero : falso;
 }
 
-static inline void stackaca_fini(stackaca *ctx) {
+static void stackaca_fini(stackaca *ctx) {
 	while (!stackaca_empty(ctx)) {
 		stackaca_pop(ctx);
 	}
 }
 
-static inline void *stackaca_peekea(stackaca *ctx) {
+static void *stackaca_peekea(stackaca *ctx) {
 	return ctx->cabeza ? ctx->cabeza->data : NULL;
 }
 #endif
@@ -659,8 +657,7 @@ typedef struct prueba_cagada_nodo {
 char matrix_componentes[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS] = {
 PRUEBA_CAGADA_FIN_DE_CACADENA };
 
-// XXX: https://stackoverflow.com/questions/1106957/passing-an-array-by-reference-in-c
-static inline void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
+static void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
 		char (*matrix_componentes_p)[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS],
 		natural *indice) {
 	stackaca *pila_recursividad = &(stackaca ) { 0 };
@@ -758,12 +755,13 @@ static inline void prueba_cagada_tarja_dfs(prueba_cagada_nodo *nodo,
 	stackaca_fini(pila_de_tarja);
 }
 
-static inline void prueba_cagada_tarja(prueba_cagada_nodo *nodos,
+static void prueba_cagada_tarja(prueba_cagada_nodo *nodos,
 		natural nodos_tam,
 		char (*matrix_componentes_p)[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS]) {
 
 	natural indice = 0;
-	for (natural i = 0; i < nodos_tam; i++) {
+natural i;
+	for (i = 0; i < nodos_tam; i++) {
 		prueba_cagada_nodo *nodo_act = nodos + i;
 		if (nodo_act->indice == PRUEBA_CAGADA_INDICE_INVALIDO
 				&& nodo_act->letra) {
@@ -772,7 +770,7 @@ static inline void prueba_cagada_tarja(prueba_cagada_nodo *nodos,
 	}
 }
 
-static inline void prueba_cagada_core(prueba_cagada_nodo *nodos,
+static void prueba_cagada_core(prueba_cagada_nodo *nodos,
 		natural nodos_tam,
 		char (*matrix_componentes_p)[PRUEBA_CAGADA_MAX_LETRAS][PRUEBA_CAGADA_MAX_LETRAS]) {
 	prueba_cagada_tarja(nodos, nodos_tam, matrix_componentes_p);
@@ -780,12 +778,13 @@ static inline void prueba_cagada_core(prueba_cagada_nodo *nodos,
 	caca_log_debug("pero q mierdas\n%s",
 			caca_comun_matrix_a_cadena_char((char *)*matrix_componentes_p, PRUEBA_CAGADA_MAX_LETRAS, PRUEBA_CAGADA_MAX_LETRAS, CACA_COMUN_BUF_STATICO));
 
-	for (char chx = PRUEBA_CAGADA_PRIMERA_LETRA, cx =
+char chx,chy,cx,cy;
+	for (chx = PRUEBA_CAGADA_PRIMERA_LETRA, cx =
 			caca_comun_letra_a_valor_mayuscula(chx);
 			chx <= PRUEBA_CAGADA_ULTIMA_LETRA; chx++, cx =
 					caca_comun_letra_a_valor_mayuscula(chx)) {
 		bool hubo_caca = falso;
-		for (char chy = PRUEBA_CAGADA_PRIMERA_LETRA, cy =
+		for (chy = PRUEBA_CAGADA_PRIMERA_LETRA, cy =
 				caca_comun_letra_a_valor_mayuscula(chy);
 				chy <= PRUEBA_CAGADA_ULTIMA_LETRA; chy++, cy =
 						caca_comun_letra_a_valor_mayuscula(chy)) {
@@ -805,7 +804,7 @@ static inline void prueba_cagada_core(prueba_cagada_nodo *nodos,
 	}
 }
 
-static inline void prueba_cagada_main() {
+static void prueba_cagada_main() {
 	natural conjuntos_tam = 0;
 	while (scanf("%u\n", &conjuntos_tam) > 0 && conjuntos_tam > 0) {
 		prueba_cagada_nodo *nodos = NULL;
@@ -813,7 +812,8 @@ static inline void prueba_cagada_main() {
 		nodos = calloc(PRUEBA_CAGADA_MAX_LETRAS, sizeof(prueba_cagada_nodo));
 		assert_timeout(nodos);
 
-		for (natural i = 0; i < conjuntos_tam; i++) {
+natural i;
+		for (i = 0; i < conjuntos_tam; i++) {
 			char opciones[5] = { PRUEBA_CAGADA_FIN_DE_CACADENA };
 			char respuesta = PRUEBA_CAGADA_FIN_DE_CACADENA;
 			prueba_cagada_nodo *nodo_sup = NULL;
@@ -832,7 +832,8 @@ static inline void prueba_cagada_main() {
 				PRUEBA_CAGADA_INDICE_INVALIDO;
 				nodo_sup->vecinos = list_new();
 			}
-			for (natural j = 0; j < 5; j++) {
+natural j;
+			for (j = 0; j < 5; j++) {
 				char letra_act = opciones[j];
 				if (letra_act == respuesta) {
 					continue;
